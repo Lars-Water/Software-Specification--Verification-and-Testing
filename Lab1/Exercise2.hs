@@ -1,5 +1,4 @@
-import Data.List
-import Test.QuickCheck
+import Lab1
 
 cardinality_power :: Int -> Int
 cardinality_power n = length (subsequences [1..n])

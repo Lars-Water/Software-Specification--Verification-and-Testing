@@ -1,5 +1,4 @@
-import Data.List
-import Test.QuickCheck
+import Lab1
 
 n_perms :: Int -> Int
 n_perms n = length (permutations [1..n])

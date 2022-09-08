@@ -1,5 +1,4 @@
-import Data.List
-import Test.QuickCheck
+import Lab1
 
 sum_squares :: Int -> Int
 sum_squares n = sum [m^2 | m <- [1..n]]
