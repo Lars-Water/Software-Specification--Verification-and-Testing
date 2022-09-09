@@ -24,7 +24,7 @@ import Data.List
     matching actually results in the faulty recursive function call.
 -}
 
-data Boy = Matthew | Peter | Jack | Arnold | Carl 
+data Boy = Matthew | Peter | Jack | Arnold | Carl
            deriving (Eq,Show)
 
 boys = [Matthew, Peter, Jack, Arnold, Carl]

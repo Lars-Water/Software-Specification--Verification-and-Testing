@@ -31,5 +31,3 @@ exercise2 = do
   putStrLn "Then get the 2 to the power of the length of the original list (given x). And finally compare if these values are the same"
   putStrLn  "This code will run for quite some time due to the exponantial behaviour of subsequences Example output: "
   quickCheck exer4
-
-
