@@ -3,15 +3,15 @@
 
 -- Is the property hard to test? If you find that it is, can you given a reason why?
 
--- Answer: Yes, because the list of subsequences extends exponentially based on the initial list. Thus
--- testing will take exponentially longer.
+-- Answer: Yes, because the length for the list of subsequences grows exponentially in relation to increase in
+-- length of the original list. Thus, time for testing will take exponentially longer.
 
 -- Give your thoughts on the following issue: when you perform the test for exercise 4, what are you testing actually?
 -- Are you checking a mathematical fact? Or are you testing whether subsequences satisfies a part of its specification?
 -- Or are you testing something else still?
 
 -- Answer: We are not proving a mathematical fact, however what we are actually testing is if the total amount of
--- subsequences of a list is equal to 2^n, where n is the chosen length of the list.
+-- subsequences of a list is equal to 2^n, where n is the specified length of the list.
 
 
 -- Time spent: 20 minutes
