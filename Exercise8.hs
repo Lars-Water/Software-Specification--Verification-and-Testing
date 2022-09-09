@@ -1,4 +1,8 @@
-import Lab1
+module Exercise6
+    (
+    ) where
+import Test.QuickCheck
+import Data.List
 
 {-
     Time spent on this exercise: 60 minutes.
@@ -20,6 +24,10 @@ import Lab1
     matching actually results in the faulty recursive function call.
 -}
 
+data Boy = Matthew | Peter | Jack | Arnold | Carl 
+           deriving (Eq,Show)
+
+boys = [Matthew, Peter, Jack, Arnold, Carl]
 
 accuses ::  Boy -> Boy -> Bool
 accuses accuser accused
