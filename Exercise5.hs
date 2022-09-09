@@ -1,7 +1,8 @@
+-- Answer: 37447
 -- Do you have to test that your answer is correct? How could this be checked?
--- Part of this could be tested by checking if it is a prime number.
--- And the another way would be to create a list of consecutive primes
--- and then check if there are 101 prime numbers smaller than the answer of consecutive101Prime
+-- Part of this could be tested by checking if the answer is a prime number.
+-- Additionally, another way would be to create a list of consecutive primes,
+-- and then check if there are 101 prime numbers smaller than the answer of consecutive101Prime,
 -- and if they are consecutive
 
 -- Time spent: 20 minutes
