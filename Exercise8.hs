@@ -5,7 +5,7 @@ import Test.QuickCheck
 import Data.List
 
 {-
-    Time spent on this exercise: 60 minutes.
+    Time spent on this exercise: 100 minutes.
 
     We are not sure how to succesfully solve for this exercise. Furthermore we are uncertain about the implementation
     of the accuses function. Accusation is ambiguous in what is actually being accused for: stealing or lying.
