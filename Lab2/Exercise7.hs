@@ -4,7 +4,7 @@ import System.Random
 import Test.QuickCheck
 
 iban :: String -> Bool
-iban string | (read (concat $ map (char_to_string) $ to_back $ filter (/=' ') string) :: Integer) `mod` 97 == 1 = True
+iban string | (read (concat $ map char_to_string $ to_back $ filter (/=' ') string) :: Integer) `mod` 97 == 1 = True
             | otherwise = False
 
 to_back :: String -> String

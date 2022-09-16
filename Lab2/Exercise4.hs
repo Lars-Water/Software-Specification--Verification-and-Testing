@@ -8,3 +8,4 @@ isPermutation [] []         = True
 isPermutation [] _          = False
 isPermutation _ []          = False
 isPermutation (x:xs) ys     = x `elem` ys && isPermutation xs (x `delete` ys)
+
