@@ -21,7 +21,7 @@ import Data.Char
 
 
 iban :: String -> Bool
-iban string | (read (concat $ map (char_to_string) $ to_back $ filter (/=' ') string) :: Integer) `mod` 97 == 1 = True
+iban string | (read (concat ( map (char_to_string) ( to_back ( filter (/=' ') string)))) :: Integer) `mod` 97 == 1 = True
             | otherwise = False
 
 to_back :: String -> String
@@ -30,8 +30,8 @@ to_back string = remainder ++ init
           init      = take 4 string
 
 char_to_string :: Char -> [Char]
-char_to_string x | x `elem` ['0'..'9'] = [x]
-                 | otherwise           = show $ (fromEnum $ toUpper x) - 55
+char_to_string x | x `elem` ['0','1','2','3','4','5','6','7','8','9'] = [x]
+                 | otherwise                                          = show ((fromEnum $ toUpper x) - 55)
 
 working_iban :: [String]
 working_iban = ["HR1723600001101234565", "LU120010001234567891","LT601010012345678901", "DE89370400440532013000", "CH9300762011623852957"]
