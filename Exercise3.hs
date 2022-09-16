@@ -1,39 +1,60 @@
--- Redo exercise 5 of Workshop 1 and test the property for integer lists of the form [1..n].
-
--- Is the property hard to test? If you find that it is, can you given a reason why?
-
--- Answer:  This property also seems hard to test due to the fact that this property grows factorial
---          with the size of any given x for the original list.
-
--- Again, give your thoughts on the following issue: when you perform the test for exercise 5,
--- what are you testing actually? Are you checking a mathematical fact?
--- Or are you testing whether perms satisfies a part of its specification?
--- Or are you testing something else still?
-
--- Answer:  Here we are testing wether the length of all possible permutations of a list is the same
---          as the the factorial of the length of the original list. We cannot say we are testing a
---          mathematical fact, because we are not testing all possible numbers. We are testing whether perms returns a list of the correct length
---          However this does not mean that the elements of the list are correct
-
+-- This file is property of the group Notorious Fortunate Panda © 2022
 -- Time spent: 35 minutes
+
+{-
+    We have used a random int generator to generate a random number between 1 and 100, to check the properties
+    
+    
+
+
+
+
+
+    
+-}
 
 module Exercise3
     (
     ) where
 import Test.QuickCheck
+import System.Random
 import Data.List
 
+infix 1 -->
 
-factorial :: Int -> Int -- helper to calculate the factorial of a given number
-factorial n | n < 2 = 1
-            | otherwise =  n * factorial (n-1)
+(-->) :: Bool -> Bool -> Bool
+p --> q = (not p) || q
 
--- this helper function is used to get all the permutations of a given list (given in the question)
-perms :: [a] ->[[a]]
-perms [] = [[]]
-perms (x:xs) = concat (map (insrt x) (perms xs))
-    where   insrt x [] = [[x]]
-            insrt x (y:ys) = (x:y:ys) : map (y:) (insrt x ys)
+-- forall :: [a] -> (a -> Bool) -> Bool
+forall = flip all
 
-exer5 :: Int -> Property
-exer5 x = x > 1 ==> length (perms [1..x]) == factorial x
+getRandomInt :: Int -> IO Int
+getRandomInt n = getStdRandom (randomR (1,n))
+
+stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
+stronger xs p q = forall xs (\ x -> p x --> q x)
+weaker xs p q = stronger xs q p
+
+prop1, prop2, prop3, prop4 :: Int -> Bool
+prop1 = (\ x -> even x && x > 3)
+prop2 x = even x
+prop3 = (\ x -> even x || x > 3)
+prop4 = (\ x -> (even x && x > 3) || even x)
+
+-- This corresponds with the answers we found in the exercises
+-- prop2 and 4 of equal strength
+descendingList = [prop1, prop2, prop4, prop3]
+
+order :: [Int->Bool] -> [Int->Bool]
+order [z] = [z]
+order (x:y:xs) | weaker [-10..10] x y = y : order (x:xs)
+               | otherwise = x : order (y:xs)
+
+propertyShow ::  IO ()
+propertyShow  = do
+    x <- getRandomInt 100 -- get random number between 1 and 100
+    let list = order [prop1, prop2, prop3, prop4]
+    putStrLn ("Value of the first property is: " ++ ( show ((list !! 1) x )))
+    putStrLn ("Value of the second property is: " ++ ( show ((list !! 2) x )))
+    putStrLn ("Value of the third property is: " ++ ( show ((list !! 3) x )))
+    putStrLn ("Value of the fourth property is: " ++ ( show ((list !! 4) x )))

@@ -1,33 +1,75 @@
--- Redo exercise 4 of Workshop 1 and test the property for integer lists of the form [1..n].
--- You can use subsequences :: [a] -> [[a]] for the list of all subsequences of a given list.
+-- This file is property of the group Notorious Fortunate Panda © 2022
+-- Time spent: 35 minutes
 
--- Is the property hard to test? If you find that it is, can you given a reason why?
+{-
+    In the main function a nested list comprehension is created. The elements of every list element
+    can be taken out of integer values in the range of 2-5. This allows for a sample containing possible
+    variations in the range [2-5, 2-5, 2-5] which means there should be a representation of every type of
+    triangle at least once.
 
--- Answer: Yes, because the length for the list of subsequences grows exponentially in relation to increase in
--- length of the original list. Thus, time for testing will take exponentially longer.
+    Looking at the filtered nested lists based on their Shape type, the results appear to follow the
+    correct requirements for every triangle shape. These results imply the function to determine whether
+    a shape is a triangle, and if so what triangle, is correcly implemented as there appear to be no
+    abnormalities in this sample size.
 
--- Give your thoughts on the following issue: when you perform the test for exercise 4, what are you testing actually?
--- Are you checking a mathematical fact? Or are you testing whether subsequences satisfies a part of its specification?
--- Or are you testing something else still?
+    At the implementation of the various tests, we considered ordering the three values instead of
+    making guard cases for each possibility. However looking at time constraint we thought the code would
+    be more time efficient and readable if we used guard cases.
 
--- Answer: We are not proving a mathematical fact, however what we are actually testing is if the total amount of
--- subsequences of a list is equal to 2^n, where n is the specified length of the list.
+    In the triangle function we have based the tests on the strongest post-condition first.
+    Before testing for the post-condition we first test to see if the values indeed form a triangle.
+    This means that our order of sets would be as follows: Other >= Isosceles >= Equilateral >= Rectangular.
+    However these sets are not strict subsets (except for the fact that Equilateral is a subset of Isoceles)
+    of eachother but it is possible that they overlap.
+    Since a Rectangular triangle is also an Isosceles triangle, but this doens't have to be.
+-}
 
-
--- Time spent: 20 minutes
 module Exercise2
     (
     ) where
-import Test.QuickCheck
 import Data.List
 
-exer4 :: Int -> Property
-exer4 x = x >= 0 ==> length (subsequences [1..x]) == 2^(length [1..x])
+data Shape = NoTriangle | Equilateral | Isosceles  | Rectangular | Other
+                    deriving (Eq,Show)
 
-exercise2 :: IO()
-exercise2 = do
-  putStrLn  "Check if the amount of subsequences of a list is equal to 2^n"
-  putStrLn "Chosen solution: first get the total amount of subsequences of a list, then get the length of that list"
-  putStrLn "Then get the 2 to the power of the length of the original list (given x). And finally compare if these values are the same"
-  putStrLn  "This code will run for quite some time due to the exponantial behaviour of subsequences Example output: "
-  quickCheck exer4
+-- This check is to make sure that each side is not equal or greater than the sum of the other sides
+notNull :: Integer -> Integer -> Integer -> Bool
+notNull x y z   | x >= (y + z) = False
+                | y >= (x + z) = False
+                | z >= (x + y) = False
+                | otherwise = True
+
+-- This check is to see if is isosceles
+equalLegs :: Integer -> Integer -> Integer -> Bool
+equalLegs x y z | x == y = True
+                | y == z = True
+                | x == z = True
+                | otherwise = False
+
+-- This check is to see if is equilateral
+equalSides :: Integer -> Integer -> Integer -> Bool
+equalSides x y z  | x == y && y == z = True
+                  | otherwise = False
+
+-- This check is to see if is rectangular
+pythagoras :: Integer -> Integer -> Integer -> Bool
+pythagoras x y z | x^2 + y^2 == z^2 = True
+                 | y^2 + z^2 == x^2 = True
+                 | x^2 + z^2 == y^2 = True
+                 | otherwise = False
+
+-- This function determines the type of triangle
+triangle :: Integer -> Integer -> Integer -> Shape
+triangle x y z  | notNull x y z == False = NoTriangle
+                | pythagoras x y z == True = Rectangular
+                | equalSides x y z == True = Equilateral
+                | equalLegs x y z == True = Isosceles
+                | otherwise = Other
+
+main = do
+    let triangles = [[a,b,c] | a <- [2..5], b <- [2..5], c <- [2..5]]
+    putStrLn ("NoTriangles: " ++ show (filter (\[a,b,c] -> triangle a b c == NoTriangle ) triangles))
+    putStrLn ("Equilateral: " ++ show (filter (\[a,b,c] -> triangle a b c == Equilateral) triangles))
+    putStrLn ("Isosceles: "   ++ show (filter (\[a,b,c] -> triangle a b c == Isosceles  ) triangles))
+    putStrLn ("Rectangular: " ++ show (filter (\[a,b,c] -> triangle a b c == Rectangular) triangles))
+    putStrLn ("Other: "       ++ show (filter (\[a,b,c] -> triangle a b c == Other      ) triangles))
