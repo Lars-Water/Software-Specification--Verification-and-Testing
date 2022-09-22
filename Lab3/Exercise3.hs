@@ -4,6 +4,8 @@ import Test.QuickCheck
 import Lecture3
 
 {-
+    Time spent: 6 Hours
+
     The cnf function transforms a propositional logical formula to its conjunction normal form.
 
     First of all all implications and equivalences are transformed with use of the provided 'arrowfree'
