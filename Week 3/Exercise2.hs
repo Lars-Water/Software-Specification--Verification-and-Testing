@@ -1,51 +1,49 @@
+-- This file is property of the group Notorious Fortunate Panda © 2022
+-- Time spent on this exercise was: 0.5 hours
 
-
--- Time spent on this exercise was:
-
-
-module Exercise2 ()where
+module Exercise2 where
 import Data.List
 import System.Random
 import Test.QuickCheck
 import Test.QuickCheck.Gen
 import Control.Monad
+import Control.Exception
 import Lecture3
-import Exercise1
+import Exercise4
 
-instance Arbitrary Form where
-    arbitrary = formGenerator
--- Source: https://stackoverflow.com/questions/63972160/quickcheck-propositional-logic-generator
--- Why did we choose this generator and our understanding of how it works:
--- 
--- Generator for Form
-formGenerator = sized formGenerator' -- we size the formGenerator' function with the sized function which quickcheck can use to choose a size for the form
-formGenerator' 0 = liftM Prop (choose (1,5)) -- case 0 we pick a random number between 1 and 15 to use as prop and lift this to monad
-formGenerator' n | n > 15 = formGenerator' (n `div` 2)
-formGenerator' n | n > 0 =                  -- in the other cases we will pick a random propositinal element, here we again allow for atoms
-           oneof [liftM Prop (choose (1,15)), -- here we pick a random propositional element and lift it to the monad form to construct our form.
-                  liftM Neg subform,
-                  liftM Cnj subforms,
-                  liftM Dsj subforms,
-                  liftM2 Impl subform subform,
-                  liftM2 Equiv subform subform]
-           where subform = formGenerator' (n `div` 2)
-                 subforms = resize (n `div` 2)  (vector (1 + (n `div` 2))) -- subforms are a list of subform, which we resize and the second subform we vectorize for efficiency
+{-  In this exercise we have used the our logical form generator from Exercise 4 to
+    help generate random logical forms, which we could then use to test properties.
+    If the pareser works accordingly it should statisfy our defined properties. For
+    each property we have defined why it should satisfy.
+-}
 
 -- Properties to test
+-- 1. Given a formula f, if the formula f was satisfiable before parsing, it should be satisfiable after parsing aswell.
 satisfiableP :: Form -> Property
 satisfiableP f  =  satisfiable f  ==> satisfiable (head (parse (show f)))
 
-tautologyP :: Form -> Property
-tautologyP f = tautology f ==> tautology (head (parse (show f)))
+-- 2. Given a formula f, if the formula f is valid, the formula should stay the same after parsing aswell.
+equalP :: Form -> Property
+equalP f  =  satisfiable f  ==> f == (head (parse (show f)))
 
-contradictionP :: Form -> Property
-contradictionP f = contradiction f ==> contradiction (head (parse (show f)))
+-- 3. Given a formula f, if the formula f is invalid, the parser should return an empty list.
+--      unfortunately we could'nt quite get this property to work, we have written an example
+--      function that should catch an error using the allVals function. However this function is type
+--      guarderd, we couldn't get a propper way to catch this error. Otherwise we could've used this to
+--      to determine whether the formula is valid or not and then check if the parser returns an empty list.
 
+-- emptyP :: Form -> Property
+-- emptyP f  =   empty f == "" ==> null (parse (show f))
 
+-- -- helper to check whether given formula is valid
+-- empty :: Form -> IO()
+-- empty f = catch (print (allVals f)) handler
+--         where
+--             handler :: SomeException -> IO()
+--             handler ex = ""
 
-main :: IO()
-main = do
+main2 :: IO ()
+main2 = do
     quickCheck $ forAll formGenerator satisfiableP
-    quickCheck $ forAll formGenerator tautologyP
-    quickCheck $ forAll formGenerator contradictionP
-
+    quickCheck $ forAll formGenerator equalP
+    -- quickCheck $ forAll formGenerator emptyP
