@@ -41,7 +41,7 @@ formGenerator' n | n > 0 =                   -- in the other cases we will pick 
             liftM2 Impl subform subform,     -- since the implies and equivalent takes two subforms we use liftM2 to lift both arguments to the monad form
             liftM2 Equiv subform subform]
         where subform = formGenerator' (div2 n)
-              subforms = resize (div2 n)  (vector (1 + (n `div` 2))) -- subforms are a list of subform, which we resize and the second subform we vectorize for efficiency
+              subforms = resize (div2 n)  (vector (2 + (n `div` 2))) -- subforms are a list of subform, which we resize and the second subform we vectorize for efficiency
 
 -- Properties to test
 -- 1. Given a formula f, the cnf of that formula should be logoically equivalent to the original formula.
