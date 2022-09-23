@@ -29,22 +29,28 @@ import Lecture3
 cnf :: Form -> Form
 cnf = distribute . nnf . arrowfree
 
+-- this helper function is used to create multiple disjunctions via map
+createDsj :: Form -> Form -> Form
+createDsj f g = Dsj [f,g]
+
 distribute :: Form -> Form
 -- Return the basic Property and Negation properties.
 distribute (Prop x) = Prop x
-distribute (Neg f) = (Neg f)
+distribute (Neg f) = Neg f
 -- Traverse into the conjunction conditions.
 distribute (Cnj fs) = Cnj $ map distribute fs
 -- Traverse into the children and afterwards transform current disjunction.
-distribute (Dsj [f1, f2]) = disjunction (distribute f1) (distribute f2)
+distribute (Dsj [f]) = distribute f
+distribute (Dsj (f:fs)) = disjunction (distribute f) (distribute (Dsj fs))
+
 
 disjunction :: Form -> Form -> Form
 disjunction (Cnj [f1, f2]) (Cnj [g1, g2]) =
-    Cnj [Cnj [ Dsj [f1, g1], Dsj [f1, g2]], Cnj [ Dsj [f2, g1], Dsj [f2, g2]]]  -- Children both are Conjunction (Double Distribution).
-disjunction f (Cnj [g1, g2]) =
-    Cnj [Dsj [f, g1], Dsj [f, g2]]   -- Right Child is Conjunction.
-disjunction (Cnj [f1, f2]) g =
-    Cnj [Dsj [f1, g], Dsj [f2, g]]   -- Left Child is Conjunction.
+    Cnj [Cnj [distribute (Dsj [f1, g1]),distribute (Dsj [f1, g2])], Cnj [distribute (Dsj [f2, g1]),distribute (Dsj [f2, g2])]]  -- Children both are Conjunction (Double Dsitribution).
+disjunction f (Cnj (g:gs)) =
+    Cnj (map (distribute . createDsj f) (g:gs))   -- Right Child is Conjunction.
+disjunction (Cnj (f:fs)) g =
+    Cnj (map (distribute . createDsj g) (f:fs))   -- Left Child is Conjunction.    
 disjunction f g =
     Dsj [f, g]   -- No conjunctions in children.
 
