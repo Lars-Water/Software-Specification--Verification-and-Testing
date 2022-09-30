@@ -10,9 +10,27 @@ import Test.QuickCheck
 
     The function is given an IOLTS model and a trace of labels. The function returns the set of states reached after the given
     trace. The implementation works by calling upon a helper function that takes in an IOLTS model and a trace of lables
-    (similar to the arguments in 'after'), and a list of states.
+    (similar to the arguments in 'after'), and a list of states resembling the current states positioned in.
+    The helper function returns the list of states reached from this list of current states with the first label in the trace.
+    The helper function is called upon recursively with the remainder of labels as the new trace parameters and the returned
+    reached list of states as the new parameter for the current states.
 
-    As a test the models K1-3, S4 and I3
+    Additionally, the afterStates function includes that for every returned list of states a concatenation is performed with
+    a list of states that can be reached from the states of this returned list with a tau transition. The defined helper
+    function "tauTransitions' is used to create this list states reachable by tau transition.
+    Moreover, empty lists will be returned by 'after' if any label is present in the trace that is not present in the IOLTS model,
+    assuming the trace is an invalid trace.
+
+    As a test the models K1-3, S4 and I3 were implemented as IOLTS models and traces were given that were either expected
+    to return a list of states if the trace reached any states in the IOLTS model, or an empty list if the trace was invalid or
+    did not reach any states in the IOLTS model. Furthermore, the implementation of I3 is expected to return states 1 and 3
+    for trace ["a"] due to the presence of a tau transition.
+
+    All traces expected to result in one ore more reached states returned these. Similarly, the traces expected to reach no
+    states due to an invalid trace corresponding to the IOLTS model returned empty lists. The tau transition was handled
+    correctly by the after function. These results imply a correct implementation of the after function as described in the
+    Tretmans paper. Nevertheless, the testing performed was scarce due to the highly specific test cases. Therefore, the
+    assumption of correct implementation is can not be seen as strong assumption.
 -}
 
 after :: IOLTS -> Trace -> [State]
@@ -46,6 +64,7 @@ main = do
     putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "but"]
     putStrLn $ show $ tretmanK1 `after` []
     putStrLn $ show "TretmanK1: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK1 `after` ["but", "abc", "but", "liq"]
     putStrLn $ show $ tretmanK1 `after` ["liq", "liq"]
     putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "liq"]
     putStrLn $ show "TretmanK2: Expected to return states"
@@ -55,6 +74,7 @@ main = do
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "but"]
     putStrLn $ show $ tretmanK2 `after` []
     putStrLn $ show "TretmanK2: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK2 `after` ["but", "abc", "but", "liq"]
     putStrLn $ show $ tretmanK2 `after` ["choc"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "liq"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "choc"]
@@ -64,6 +84,7 @@ main = do
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq"]
     putStrLn $ show $ tretmanK3 `after` []
     putStrLn $ show "TretmanK3: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK3 `after` ["but", "abc", "but", "liq"]
     putStrLn $ show $ tretmanK2 `after` ["choc"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "but"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "liq"]
