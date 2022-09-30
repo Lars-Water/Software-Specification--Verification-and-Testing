@@ -33,7 +33,8 @@ getEndStates states transitions = do
 
 straces :: IOLTS -> [Trace]
 straces (states,_,_,transitions,start) = do
-    nub (temp (getEndStates states transitions) start [[]])
+    --nub (temp (getEndStates states transitions) start [[]])
+    nub (temp transitions start [[]])
 
 temp :: [LabeledTransition] -> State -> [Trace] -> [Trace]
 temp transitions curState traceList = do
