@@ -6,11 +6,6 @@ import Test.QuickCheck
 import Exercise2
 import Data.List
 
--- It w
-getEndStates :: [State] -> [LabeledTransition] -> [LabeledTransition]
-getEndStates states transitions = do
-    let endStates = filter (\x -> not (any (\(from,_,_) -> from == x) transitions)) states
-    transitions ++ map (\x -> (x,delta,x)) endStates
 
 -- This helper function is used to filter transitions based on the origin State of the transition
 filterTransitionsByStartState :: [LabeledTransition] -> State -> [LabeledTransition]
@@ -19,7 +14,6 @@ filterTransitionsByStartState transitions originState = filter (\(from,_,_) -> f
 straces :: IOLTS -> [Trace]
 straces (states,_,_,transitions,start) = do
     nub (bfs transitions [(start,[])])
-    -- nub (bfs getEndStates states transitions [(start,[])])
 
 -- This is a Breadth-first Search function, used to recursively traverse through an IOLTS. It gets a list of
 -- all transitions of the model and a queue of States and their corresponding Traces as parameters and returns
