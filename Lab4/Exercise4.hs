@@ -3,6 +3,12 @@ import Data.List
 import LTS
 import Test.QuickCheck
 
+-- Time spent: 300 minutes --
+
+{-
+    The
+-}
+
 after :: IOLTS -> Trace -> [State]
 iolts@(_,_,_,_,state) `after` []      = [state] ++ (tauTransitions iolts [state])   -- Return the current State + tau transitions
 iolts@(_,_,_,_,state) `after` labels  = afterStates iolts [state] labels            -- Return the output States of the multi-label trace
@@ -27,25 +33,39 @@ thd :: LabeledTransition -> State
 thd (_, _, a) = a
 
 main = do
-    putStrLn $ show "TretmanK1"
+    putStrLn $ show "TretmanK1: Expected to return states"
     putStrLn $ show $ tretmanK1 `after` ["but"]
     putStrLn $ show $ tretmanK1 `after` ["but", "but"]
     putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq"]
     putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "but"]
+    putStrLn $ show $ tretmanK1 `after` []
+    putStrLn $ show "TretmanK1: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK1 `after` ["liq", "liq"]
     putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "liq"]
-    putStrLn $ show "TretmanK2"
+    putStrLn $ show "TretmanK2: Expected to return states"
     putStrLn $ show $ tretmanK2 `after` ["but"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "but"]
+    putStrLn $ show $ tretmanK2 `after` []
+    putStrLn $ show "TretmanK2: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK2 `after` ["choc"]
     putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "liq"]
-    putStrLn $ show "TretmanK3"
+    putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "choc"]
+    putStrLn $ show "TretmanK3: Expected to return states"
     putStrLn $ show $ tretmanK3 `after` ["but"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq"]
+    putStrLn $ show $ tretmanK3 `after` []
+    putStrLn $ show "TretmanK3: Expected to NOT return any states"
+    putStrLn $ show $ tretmanK2 `after` ["choc"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "but"]
     putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "liq"]
-    putStrLn $ show "TretmanS4"
-    putStrLn $ show $ tretmanS4 `after` []
+    putStrLn $ show "TretmanS4: Expected to return states INCLUDING tau transitions"
     putStrLn $ show $ tretmanS4 `after` ["a"]
     putStrLn $ show $ tretmanS4 `after` ["a","x"]
+    putStrLn $ show $ tretmanS4 `after` []
+    putStrLn $ show "TretmanI3: Expected to return states"
+    putStrLn $ show $ tretmanI3 `after` ["a", "a", "x"]
+    putStrLn $ show $ tretmanI3 `after` ["a", "a", "x", "b"]
+    putStrLn $ show $ tretmanI3 `after` ["b", "b", "y", "b"]

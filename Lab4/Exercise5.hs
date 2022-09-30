@@ -26,6 +26,23 @@ outputLabels (_, _, modelOutputLabels, labeledTransitions, _) curState =
                 label `elem` modelOutputLabels && state == curState
 
 testmain = do
-    putStrLn $ show $ out tretmanK3 0 ["but", "but"]
-    putStrLn $ show $ tretmanK1 `ioco` tretmanK3
-    putStrLn $ show $ tretmanK3 `ioco` tretmanK1
+    putStrLn $ show "i1 ioco s(1-4)"
+    putStrLn $ show $ (tretmanI1 `ioco` tretmanS1)
+    putStrLn $ show $ (tretmanI1 `ioco` tretmanS2)
+    putStrLn $ show $ (tretmanI1 `ioco` tretmanS3)
+    putStrLn $ show $ (tretmanI1 `ioco` tretmanS4)
+    putStrLn $ show "i2 ioco s(1-4)"
+    putStrLn $ show $ (tretmanI2 `ioco` tretmanS1)
+    putStrLn $ show $ (tretmanI2 `ioco` tretmanS2)
+    putStrLn $ show $ (tretmanI2 `ioco` tretmanS3)
+    putStrLn $ show $ (tretmanI2 `ioco` tretmanS4)
+    putStrLn $ show "i3 ioco s(1-4)"
+    putStrLn $ show $ (tretmanI3 `ioco` tretmanS1)
+    putStrLn $ show $ (tretmanI3 `ioco` tretmanS2)
+    putStrLn $ show $ (tretmanI3 `ioco` tretmanS3)
+    putStrLn $ show $ (tretmanI3 `ioco` tretmanS4)
+    putStrLn $ show "i4 ioco s(1-4)"
+    putStrLn $ show $ (tretmanI4 `ioco` tretmanS1)
+    putStrLn $ show $ (tretmanI4 `ioco` tretmanS2)
+    putStrLn $ show $ (tretmanI4 `ioco` tretmanS3)
+    putStrLn $ show $ (tretmanI4 `ioco` tretmanS4)
