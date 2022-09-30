@@ -6,7 +6,13 @@ import Test.QuickCheck
 -- Time spent: 300 minutes --
 
 {-
-    The
+    The after function in this module represents the after function corresponding with the definition in the Tretmans paper.
+
+    The function is given an IOLTS model and a trace of labels. The function returns the set of states reached after the given
+    trace. The implementation works by calling upon a helper function that takes in an IOLTS model and a trace of lables
+    (similar to the arguments in 'after'), and a list of states.
+
+    As a test the models K1-3, S4 and I3
 -}
 
 after :: IOLTS -> Trace -> [State]

@@ -9,14 +9,16 @@ import SetOrd
 -- Determine ioco between model i and model m.
 ioco :: IOLTS -> IOLTS -> Bool
 i@(_, _, _, _, initial_i) `ioco` m@(_, _, _, _, initial_m) = all (==True) subsets
-    -- For every strace in straces determine if the outputlabels from modl i are a subset of the outputlabels from modl m
-    -- NOTE: straces is taken from Exercise3.hs, but is now a static list of traces because straces is not implemented yet!!!
-    where subsets = map (\strace -> (list2set (out i initial_i strace)) `subSet` (list2set (out m initial_m strace))) straces
+    -- For every strace in straces determine if the outputlabels from model i are a subset of the outputlabels from modl m
+    where subsets = map (\strace ->
+            if length (out i initial_i strace) == 0
+                then length (out m initial_m strace) == 0
+            else (list2set (out i initial_i strace)) `subSet` (list2set (out m initial_m strace))) (straces m)
 
 out :: IOLTS -> State -> Trace -> [Label]
 out iolts state trace = foldr (++) [] (map output afterTrace)
-    where afterTrace  = (iolts `after` trace)                       --  Determine the states after the requested trace from the given state in the IOLTS model
-          output = (\afterState -> outputLabels iolts afterState)   --  Determine the outputlabels of the requested state in the IOLTS model
+    where afterTrace  = (iolts `after` trace)                            --  Determine the states after the requested trace from the given state in the IOLTS model
+          output      = (\afterState -> outputLabels iolts afterState)   --  Determine the outputlabels of the requested state in the IOLTS model
 
 outputLabels :: IOLTS -> State -> [Label]
 outputLabels (_, _, modelOutputLabels, labeledTransitions, _) curState =
