@@ -1,3 +1,4 @@
+module Exercise4 where
 import Data.List
 import LTS
 import Test.QuickCheck
