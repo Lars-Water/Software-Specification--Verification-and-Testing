@@ -15,14 +15,14 @@ i@(_, _, _, _, initial_i) `ioco` m@(_, _, _, _, initial_m) = all (==True) subset
 
 out :: IOLTS -> State -> Trace -> [Label]
 out iolts state trace = foldr (++) [] (map output afterTrace)
-    where afterTrace  = (after iolts state trace)                   --  Determine the states after the requested trace from the given state in the IOLTS model
+    where afterTrace  = (iolts `after` trace)                       --  Determine the states after the requested trace from the given state in the IOLTS model
           output = (\afterState -> outputLabels iolts afterState)   --  Determine the outputlabels of the requested state in the IOLTS model
 
 outputLabels :: IOLTS -> State -> [Label]
 outputLabels (_, _, modelOutputLabels, labeledTransitions, _) curState =
-    map second (filter filterOutputLabels labeledTransitions)  --  Return map of output labels from requested state
-        where second             = \(_, label, _) -> label     --  Return second element of a triple tuple
-              filterOutputLabels = \(state, label, _) ->       --  Return TransitionLabels that contain outputlabels and requested state
+    map second (filter filterOutputLabels labeledTransitions)       --  Return map of output labels from requested state
+        where second             = \(_, label, _) -> label          --  Return second element of a triple tuple
+              filterOutputLabels = \(state, label, _) ->            --  Return TransitionLabels that contain outputlabels and requested state
                 label `elem` modelOutputLabels && state == curState
 
 testmain = do

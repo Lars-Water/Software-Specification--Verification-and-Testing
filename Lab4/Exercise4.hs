@@ -3,17 +3,24 @@ import Data.List
 import LTS
 import Test.QuickCheck
 
-after :: IOLTS -> State -> Trace -> [State]
-after iolts state []             = [state]                                          -- Return the current State
-after iolts state [label]        = afterStates iolts state label                    -- Return the output State of the single label and input state
-after iolts state (label:labels) = foldr (++) [] (map (nextNextStates) nextStates)  -- Return the output States of the multi-label trace
-    where nextStates     = afterStates iolts state label                    --  Return the next states from the first label in the trace
-          nextNextStates = \afterState -> after iolts afterState labels     --  Recurively call upon 'after' with remaining labels in trace and given list of states
+after :: IOLTS -> Trace -> [State]
+iolts@(_,_,_,_,state) `after` []      = [state] ++ (tauTransitions iolts [state])   -- Return the current State + tau transitions
+iolts@(_,_,_,_,state) `after` labels  = afterStates iolts [state] labels            -- Return the output States of the multi-label trace
 
 -- Return the output states of the TransitionLabels with the corresponding input state and label.
-afterStates :: IOLTS -> State -> Label -> [State]
-afterStates (_, _, _, xs, _) curState curLabel =
-    map thd (filter (\ (state, label, _) -> label == curLabel && state == curState) xs)
+afterStates :: IOLTS -> [State] -> Trace -> [State]
+afterStates iolts@(_, _, _, labeledTransitions, _) states [curLabel] = outputStates ++ (tauTransitions iolts outputStates)
+    where outputStates = map thd outputTransitions
+            where outputTransitions = (filter (\ (state, label, _) -> label == curLabel && state `elem` states) labeledTransitions)
+afterStates iolts@(_, _, _, labeledTransitions, _) states (curLabel: nextLabels) = afterStates iolts outputsAndTaus nextLabels
+    where outputsAndTaus = outputStates ++ (tauTransitions iolts outputStates)
+            where outputStates = map thd outputTransitions
+                    where outputTransitions = (filter (\ (state, label, _) -> label == curLabel && state `elem` states) labeledTransitions)
+
+-- Return states reachable with tau from requested states.
+tauTransitions :: IOLTS -> [State] -> [State]
+tauTransitions (_, _, _, labeledTransitions, _) afters = map (\(_, _, end) -> end) (filter correspondingTaus labeledTransitions)
+    where correspondingTaus = (\(start, label, _) -> label == tau && start `elem` afters)
 
 -- Return the third element of a triple tuple.
 thd :: LabeledTransition -> State
@@ -21,20 +28,24 @@ thd (_, _, a) = a
 
 main = do
     putStrLn $ show "TretmanK1"
-    putStrLn $ show $ after tretmanK1 0 ["but"]
-    putStrLn $ show $ after tretmanK1 0 ["but", "but"]
-    putStrLn $ show $ after tretmanK1 0 ["but", "but", "liq"]
-    putStrLn $ show $ after tretmanK1 0 ["but", "but", "liq", "but"]
-    putStrLn $ show $ after tretmanK1 0 ["but", "but", "liq", "liq"]
+    putStrLn $ show $ tretmanK1 `after` ["but"]
+    putStrLn $ show $ tretmanK1 `after` ["but", "but"]
+    putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq"]
+    putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "but"]
+    putStrLn $ show $ tretmanK1 `after` ["but", "but", "liq", "liq"]
     putStrLn $ show "TretmanK2"
-    putStrLn $ show $ after tretmanK2 0 ["but"]
-    putStrLn $ show $ after tretmanK2 0 ["but", "but"]
-    putStrLn $ show $ after tretmanK2 0 ["but", "but", "liq"]
-    putStrLn $ show $ after tretmanK2 0 ["but", "but", "liq", "but"]
-    putStrLn $ show $ after tretmanK2 0 ["but", "but", "liq", "liq"]
+    putStrLn $ show $ tretmanK2 `after` ["but"]
+    putStrLn $ show $ tretmanK2 `after` ["but", "but"]
+    putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq"]
+    putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "but"]
+    putStrLn $ show $ tretmanK2 `after` ["but", "but", "liq", "liq"]
     putStrLn $ show "TretmanK3"
-    putStrLn $ show $ after tretmanK3 0 ["but"]
-    putStrLn $ show $ after tretmanK3 0 ["but", "but"]
-    putStrLn $ show $ after tretmanK3 0 ["but", "but", "liq"]
-    putStrLn $ show $ after tretmanK3 0 ["but", "but", "liq", "but"]
-    putStrLn $ show $ after tretmanK3 0 ["but", "but", "liq", "liq"]
+    putStrLn $ show $ tretmanK3 `after` ["but"]
+    putStrLn $ show $ tretmanK3 `after` ["but", "but"]
+    putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq"]
+    putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "but"]
+    putStrLn $ show $ tretmanK3 `after` ["but", "but", "liq", "liq"]
+    putStrLn $ show "TretmanS4"
+    putStrLn $ show $ tretmanS4 `after` []
+    putStrLn $ show $ tretmanS4 `after` ["a"]
+    putStrLn $ show $ tretmanS4 `after` ["a","x"]
