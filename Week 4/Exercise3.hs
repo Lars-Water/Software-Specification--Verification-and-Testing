@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 6.5 hours
+-- Time spent: 330 minutes --
 module Exercise3 where
 import LTS
 import Test.QuickCheck
