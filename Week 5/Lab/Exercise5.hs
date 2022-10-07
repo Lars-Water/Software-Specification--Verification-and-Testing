@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: ?? minutes
+-- Time spent: 360 minutes --
 
 module Exercise5 where
 import Mutation
@@ -12,37 +12,52 @@ import Data.List
 import Data.Maybe
 
 {-
-    To calculate the conjectures
-    we will first create the powerset of (list of) properties
-    to get all the possible combinations of properties.
-    Then we will count the number of survivors for each combination
-    and determine based on the survivors which conjectures can be made.
-    Example:
-    Properties: [1,2,3]
-    Combinations: [[1], [2], [3], [1,2], [1,3], [2,3], [1,2,3]]
-    Survivors: [1, 2, 0, 2, 0, 0, 0]
-    Some example conjectures: 1 ==> 2, 3 ==> 1, [1,3] == [2,3]
-    Do note that this function will not be able to check for disjunctions.
-    So both property 1 and 2 might have 1 survivor and we will state them as equivalent,
-    but the survivor might be different making them disjoint
--}
 
--- Returns the number of survivors for each property subset
--- Type definition of the function: mutator -> number of mutants -> [(properties, name of property)] -> function -> [Number of survivors]
-
-{-
+    To calculate the conjectures we will first create the powerset of (list of) properties to get all the possible combinations of properties.
+    For every subset of properties, a list is returned where the elements represent the state of the mutant (Survived=True & Killed=False).
+    Mutation tests are performed on every subset in this powerset. Through utilization of these mutation tests and the helper functions
+    'equivalence' and 'implication', the conjectures are determined for every subset of properties.
 
     Conjectures equivalence:
-        The approach to calculating equivalence conjectures starts with defining the powerset of the list of properties. Subsequently,
-        mutation tests are performed on every subset in this powerset. Specification of the mutants that were killed should be returned
-        from these mutation tests. Consequently, equivalence conjectures can be determined through comparison of the killed mutants where
-        an equal return value implies equivalence.
+        Specification of the mutants that were killed should be returned from the mutation tests. Consequently, equivalence conjectures
+        can be determined through comparison of the killed mutants where the same mutants killed implies equivalence.
+        The 'equivalence' helper function maps the list of mutation tests for every property subset to the remaining mutation tests of property
+        subsets. If the compared mutations tests portrayed equal results, the compared property subsets are added as an equivalence pair to the returned list.
+        The returned list contains all property subset pairs with equivalence conjecture.
     Conjecture implication:
-        ...
+        Specification of the mutant states should be returned from the mutation tests. Consequently, implication conjectures
+        can be determined through comparison of the killed mutants from a property subset where AT LEAST the same mutants killed in the
+        other property subset implies implication.
+        The 'implication' helper function maps the list of mutation tests for every property subset to the remaining mutation tests of property subsets.
+        If AT LEAST all mutants killed in the first test of the compared mutations tests were also killed in the second test, the compared property subsets
+        are added as an implication pair to the returned list.
+        The returned list contains all property subset pairs with implication conjecture.
+
+    *The example below was ran to check the funcitonality of the functions:
+    Properties: [1,2]
+    Combinations: [[1,2], [1], [2], []]]
+    Survivors:
+        [1,2] - [False,False,False,False,False,False,False,False,False,False]
+        [1]   - [False,False,False,False,False,False,False,False,False,False]
+        [2]   - [False,True,False,False,False,False,False,False,False,False]
+        []    - [True,True,True,True,True,True,True,True,True,True]
+    Resulting conjectures were: [1] == [1,2], [2] ==> [1,2], [2] ==> [1]
+
+    The results from the above example run implies that the implementation for conjectures was done correctly.
+    The equivalence conjectures holds for property subset 1 and 2 and property subset 1. Both these subsets killed the same mutants.
+    The implication conjecture holds for property subset 2 to property subset 1 and 2 and for property subset 2 to property subset 1.
+    The set of killed mutants from property subset 2 is a subset of killed mutants for both property subset 1 and property subset 1 and 2.
+
+    Properties index:
+        Property 1: Output list has exactly 10 elements
+        Property 2: First number is the input
+        Property 3: The sum of the output is the input times the 10th triangle number
+        Property 4: The difference between consecutive elements is the input
+        Property 5: Any element modulo the input is zero
 
 -}
 
--- https://stackoverflow.com/questions/16108714/removing-duplicates-from-a-list-in-haskell-without-elem
+-- Remove duplicates from list: https://stackoverflow.com/questions/16108714/removing-duplicates-from-a-list-in-haskell-without-elem
 rmdups :: Eq a => [a] -> [a]
 rmdups [] = []
 rmdups (x:xs)   | x `elem` xs   = rmdups xs
@@ -53,8 +68,9 @@ powerProps :: [a] -> [[a]]
 powerProps [] = [[]]
 powerProps (x:xs) = map (x:) (powerProps xs) ++ powerProps xs
 
--- Return a nesetd list where every list nesting represents a subset of properties where every element represents
+-- Return a nested list where every list nesting represents a subset of properties where every element represents
 -- whether the mutant survived (True) or is killed (False)
+-- Type definition of the function: mutator -> number of mutants -> [properties] -> function under test -> [Mutant state result]
 survivors :: Eq a => (a -> Gen a) -> Integer -> [a -> Integer -> Bool] -> (Integer -> a) -> IO [Bool]
 survivors mutator n_mutants props func = do
     let inputs = [0..n_mutants]
@@ -62,17 +78,21 @@ survivors mutator n_mutants props func = do
     return results
 
 -- For every property subset determine if the other property subsets killed the same mutants.
+-- Type definition of the function: [([Mutant state result],[Propery subset])] -> [[([[Property subset equivalence pair]],Equivalence boolean value)]]
 equivalence :: [([Bool],[Integer])] -> [[([[Integer]],Bool)]]
 equivalence survivorsSubsets = do
     let equivalence_list = map (\(subset,props) -> map (\(compareSubset,compareProps) -> (sort([props] ++ [compareProps]), compareSubset == subset)) (delete (subset,props) survivorsSubsets)) survivorsSubsets
     return $ rmdups (filter (\(_,check) -> check) (concat equivalence_list))
 
 -- For every property subset determine if the other property subsets killed the same mutants.
-overrules :: [([Bool],[Integer])] -> [[([[Integer]],Bool)]]
-overrules survivorsSubsets = do
-    let equivalence_list = map (\(subset,props) -> map (\(compareSubset,compareProps) -> ([props] ++ [compareProps], impl compareSubset subset)) (delete (subset,props) survivorsSubsets)) survivorsSubsets
-    return $ filter (\(_,check) -> check) (concat equivalence_list)
+-- Type definition of the function: [([Mutant state result],[Propery subset])] -> [[([[Property subset implication pair]],Implication boolean value)]]
+implication :: [([Bool],[Integer])] -> [[([[Integer]],Bool)]]
+implication survivorsSubsets = do
+    let implication_list = map (\(subset,props) -> map (\(compareSubset,compareProps) -> ([props] ++ [compareProps], impl compareSubset subset)) (delete (subset,props) survivorsSubsets)) survivorsSubsets
+    return $ filter (\(_,check) -> check) (concat implication_list)
 
+-- Helper function that determines if the first list is a subset of the second subset regarding
+-- Type definition of the function: [Property subset 1] -> [Property subset 2] -> Property subset 1 is subset of property subset 2
 impl :: [Bool] -> [Bool] -> Bool
 impl [] [] = True
 impl [] xs = False
@@ -80,14 +100,7 @@ impl xs [] = False
 impl (x:xs) (y:ys) | x == True && y == False = False
                    | otherwise = impl xs ys
 
-{-
-    Properties index:
-        Property 1: Output list has exactly 10 elements
-        Property 2: First number is the input
-        Property 3: The sum of the output is the input times the 10th triangle number
-        Property 4: The difference between consecutive elements is the input
-        Property 5: Any element modulo the input is zero
--}
+-- Exmample run
 main5 :: IO ()
 main5 = do
     --  Determine powerset of props
@@ -115,7 +128,8 @@ main5 = do
     print equivalences
     print ""
     print "Implies: "
-    -- Determine equivalences between the subsets.
-    let implies = map (\(props,_) -> props) (head $ overrules (zip mutantSurvivors (powerProps [1..2])))
+    -- Determine implications between the subsets.
+    let implies = map (\(props,_) -> props) (head $ implication (zip mutantSurvivors (powerProps [1..2])))
+    -- Filter out empty set and equivalence conjectures to result with the implication conjectures.
     let equiv_filtered = (filter (\[x,y] -> not([x,y] `elem` equivalences)&&not([y,x] `elem` equivalences)) implies)
     print (filter (\[x,y] -> x /= []) equiv_filtered)
