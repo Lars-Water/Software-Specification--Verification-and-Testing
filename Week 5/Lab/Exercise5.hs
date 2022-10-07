@@ -47,6 +47,9 @@ import Data.Maybe
     The equivalence conjectures holds for property subset 1 and 2 and property subset 1. Both these subsets killed the same mutants.
     The implication conjecture holds for property subset 2 to property subset 1 and 2 and for property subset 2 to property subset 1.
     The set of killed mutants from property subset 2 is a subset of killed mutants for both property subset 1 and property subset 1 and 2.
+    Because the mutator selected was 'addElements', the results from this small test run does seem to be what could be expected. The property
+    for ten elements shall always be violated with this mutator. Hence, all mutants are killed in property subsets where this property
+    is present. The property subset that holds survived mutants are the empty set and the subset with 'elementsIsInput' property.
 
     Properties index:
         Property 1: Output list has exactly 10 elements
