@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 45 minutes
+-- Time spent on this exercise was: 100 minutes
 
 module Exercise1 where
 import Mutation
@@ -29,7 +29,7 @@ import Data.Maybe
     Each will have an example and (if applicable)
     a statement of whether it is weaker or stronger than other post conditions.
     (Stronger post conditions are more restrictive.)
-    The first 9 of them we have implemented below.
+    The first 9 of these mutators we have implemented below.
 
     1. Duplicating each element of the list
     example: [1,2,3] -> [1,1,2,2,3,3]
@@ -54,22 +54,26 @@ import Data.Maybe
     This postcondition is stronger than 5
     8. Squaring all elements of the list
     example: [1,2,3] -> [1,4,9]
+    This postcondition is stronger than 12
     9. Duplicating entire list
     example: [1,2,3] -> [1,2,3,1,2,3]
+    This postcondition is stronger than 14
 
     10. Negating elements (randomly)
     example: [1,-2,-3,4] -> [-1,-2,3,-4]
     This poscondition is weaker than 6
     11. Multiplying all elements with the same (random) number
     example (with number 4): [1,2,3] -> [4,8,12]
-    12. Multiplying all elements with a different (random) number
+    This poscondition is stronger than 12
+    12. Multiplying all elements with a (random) number
     example (with numbers 8,6,2): [1,2,3] -> [8,12,1]
+    This postcondition is weaker than 8 and 11
     13. Duplicating elements (randomly)
     example: [1,2,3] -> [1,1,1,2,3,3]
     This postcondition is weaker than 1
     14. Repeating the list a (random) number of times
     example: [1,2,3] -> [1,2,3,1,2,3,1,2,3]
-
+    This postcondition is weaker than 9
 -}
 
 genNum :: Integer -> Gen Integer
@@ -115,5 +119,4 @@ square xs = return $ map (^2) xs
 -- 9. Duplicating entire list
 duplicateList :: [Integer] -> Gen [Integer]
 duplicateList xs = return $ xs ++ xs
-
 
