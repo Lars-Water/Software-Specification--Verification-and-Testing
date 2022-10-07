@@ -78,14 +78,14 @@ survivors mutator n_mutants props func = do
     return results
 
 -- For every property subset determine if the other property subsets killed the same mutants.
--- Type definition of the function: [([Mutant state result],[Propery subset])] -> [[([[Property subset equivalence pair]],Equivalence boolean value)]]
+-- Type definition of the function: [([Mutant state],[Property subset Indices])] -> [[([[Property subset equivalence pair]],Equivalence boolean value)]]
 equivalence :: [([Bool],[Integer])] -> [[([[Integer]],Bool)]]
 equivalence survivorsSubsets = do
     let equivalence_list = map (\(subset,props) -> map (\(compareSubset,compareProps) -> (sort([props] ++ [compareProps]), compareSubset == subset)) (delete (subset,props) survivorsSubsets)) survivorsSubsets
     return $ rmdups (filter (\(_,check) -> check) (concat equivalence_list))
 
 -- For every property subset determine if the other property subsets killed the same mutants.
--- Type definition of the function: [([Mutant state result],[Propery subset])] -> [[([[Property subset implication pair]],Implication boolean value)]]
+-- Type definition of the function: [([Mutant state],[Property subset Indices])] -> [[([[Property subset implication pair]],Implication boolean value)]]
 implication :: [([Bool],[Integer])] -> [[([[Integer]],Bool)]]
 implication survivorsSubsets = do
     let implication_list = map (\(subset,props) -> map (\(compareSubset,compareProps) -> ([props] ++ [compareProps], impl compareSubset subset)) (delete (subset,props) survivorsSubsets)) survivorsSubsets
@@ -123,13 +123,13 @@ main5 = do
     print $ mutantSurvivors!!3
     print ""
     print "Equivalence: "
-    -- Determine equivalences between the subsets.
-    let equivalences = map (\(props,_) -> props) (head $ equivalence (zip mutantSurvivors (powerProps [1..2])))
+    -- Determine equivalences between the subsets. Only the equivalence conjuctures are selected to be printed to make it more readable.
+    let equivalences = map (\(props,_) -> props) (head $ equivalence (zip mutantSurvivors (powerProps [1..2]))) -- `powerProps [1..2]` because two properties are tested
     print equivalences
     print ""
     print "Implies: "
-    -- Determine implications between the subsets.
-    let implies = map (\(props,_) -> props) (head $ implication (zip mutantSurvivors (powerProps [1..2])))
+    -- Determine implications between the subsets. Only the implication conjuctures are selected to be printed to make it more readable.
+    let implies = map (\(props,_) -> props) (head $ implication (zip mutantSurvivors (powerProps [1..2]))) -- `powerProps [1..2]` because two properties are tested
     -- Filter out empty set and equivalence conjectures to result with the implication conjectures.
     let equiv_filtered = (filter (\[x,y] -> not([x,y] `elem` equivalences)&&not([y,x] `elem` equivalences)) implies)
     print (filter (\[x,y] -> x /= []) equiv_filtered)
