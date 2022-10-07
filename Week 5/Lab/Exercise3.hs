@@ -12,11 +12,11 @@ import Data.Function
 import Data.Maybe
 
 {-
-    To calculate the minimal property susbset
+    To calculate the minimal property subset,
     we will first create the powerset of (list of) properties
     to get all the possible combinations of properties.
-    Then we will count the number of survivors for each combination
-    and determine the which combinations lead to the minimum amount of survivors.
+    After that we will count the number of survivors for each combination
+    and determine which combinations lead to the minimum amount of survivors.
     If there is only one, it is the minimal property subset.
     If there are multiple combinations with the minimum amount of survivors,
     we select the subset with the smallest number of properties.
