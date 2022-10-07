@@ -37,6 +37,11 @@ main2 = do
     testOne <- generate $ countSurvivors addElements 4000 [prop_tenElements] multiplicationTable
     testTwo <- generate $ countSurvivors addElements 4000 [prop_tenElements, prop_linear] multiplicationTable
     testThree <- generate $ countSurvivors shuffled 4000 [prop_tenElements, prop_linear] multiplicationTable
+    testFour <- generate $ countSurvivors sublist 4000 [prop_tenElements, prop_linear] multiplicationTable
+    testFive <- generate $ countSurvivors square 4000 [prop_tenElements, prop_linear, prop_firstElementIsInput] multiplicationTable
+    testSix <- generate $ countSurvivors duplicateList 4000 [prop_tenElements, prop_linear, prop_sumIsTriangleNumberTimesInput] multiplicationTable
+
+
     putStrLn "After implementation of the countSurvivors function we can see the following results per test"
     putStrLn "Test 1: 4000 mutants, properties: prop_tenElements, mutator: addElements"
     putStrLn "Number of survived mutants: "
@@ -50,6 +55,18 @@ main2 = do
     putStrLn "Number of survived mutants: "
     print testThree
 
+    putStrLn "Test 4: 4000 mutants, properties: prop_tenElements, prop_linear, mutator: sublist"
+    putStrLn "Number of survived mutants: "
+    print testFour
+
+    putStrLn "Test 5: 4000 mutants, properties: prop_tenElements, prop_linear, prop_firstElementIsInput, mutator: square"
+    putStrLn "Number of survived mutants: "
+    print testFive
+
+    putStrLn "Test 6: 4000 mutants, properties: prop_tenElements, prop_linear, prop_sumIsTriangleNumberTimesInput, mutator: duplicateList"
+    putStrLn "Number of survived mutants: "
+    print testSix
+    
     putStrLn ""
     putStrLn "Based on the tests that we ran above we can see the following results."
     putStrLn "If we have a random mutator such as addElements, we cans see that more properties will not necessarily lead to less surviving mutants."
