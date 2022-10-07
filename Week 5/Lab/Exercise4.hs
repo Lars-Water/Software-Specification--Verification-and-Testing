@@ -24,6 +24,7 @@ import Data.Maybe
 
 -}
 
+strength :: (Eq a, Fractional b) => (a -> Gen a) -> Integer -> [a -> Integer -> Bool] -> (Integer -> a) -> Gen b
 strength mutator n_mutants props func = do
     n_survivors <- countSurvivors mutator n_mutants props func
     return $ 1 - (fromIntegral n_survivors) / (fromIntegral n_mutants)
