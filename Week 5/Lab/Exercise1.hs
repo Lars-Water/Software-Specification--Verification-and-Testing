@@ -30,10 +30,6 @@ import Data.Maybe
 genNum :: Integer -> Gen Integer
 genNum x = abs `fmap` (arbitrary :: Gen Integer) `suchThat` (== x)
 
-subs :: [Integer] -> [[Integer]]
-subs [] = []
-subs (x:xs) = [x] : subs xs
-
 -- 1. Adding duplicates to the list
 duplicated :: [Integer] -> Gen [Integer]
 duplicated [] = return []

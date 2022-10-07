@@ -16,7 +16,7 @@ import Data.Maybe
 -- 3. If it does, we add it to the list of surviving mutants
 countSurvivors ::  Eq a => (a -> Gen a) -> Integer -> [a -> Integer -> Bool] -> (Integer -> a) -> Gen Integer
 countSurvivors mutator n_mutants props func = do
-    let inputs = [0..n_mutants]
+    let inputs = [1..n_mutants]
     results <- mapM (\x -> survived mutator props func x) inputs
     return $ toInteger $ length $ filter (==True) results
 
@@ -31,8 +31,9 @@ survived mutator props func x = do
     return $ all (==True) mutants
 
 
-main :: IO ()
-main = do
+main2 :: IO ()
+main2 = do
+    putStrLn " "
     testOne <- generate $ countSurvivors addElements 4000 [prop_tenElements] multiplicationTable
     testTwo <- generate $ countSurvivors addElements 4000 [prop_tenElements, prop_linear] multiplicationTable
     testThree <- generate $ countSurvivors shuffled 4000 [prop_tenElements, prop_linear] multiplicationTable
@@ -40,9 +41,20 @@ main = do
     putStrLn "Test 1: 4000 mutants, properties: prop_tenElements, mutator: addElements"
     putStrLn "Number of survived mutants: "
     print testOne
+
     putStrLn "Test 2: 4000 mutants, properties: prop_tenElements, prop_linear, mutator: addElements"
     putStrLn "Number of survived mutants: "
     print testTwo
+
     putStrLn "Test 3: 4000 mutants, properties: prop_tenElements, prop_linear, mutator: shuffled"
     putStrLn "Number of survived mutants: "
     print testThree
+
+    putStrLn ""
+    putStrLn "Based on the tests that we ran above we can see the following results."
+    putStrLn "If we have a random mutator such as addElements, we cans see that more properties will not necessarily lead to less surviving mutants."
+    putStrLn "This is due to the randomness of the mutator which makes it hard to test for the same input"
+    putStrLn ""
+    putStrLn "However we doe believe that given a valid non-random mutator, a higher number of properties will lead to less surviving mutants."
+    putStrLn "We also see that if a mutator does not change the content of the list, like our shuffled mutator. The test succesfully kills all mutants."
+
