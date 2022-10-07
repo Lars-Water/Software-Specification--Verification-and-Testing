@@ -15,10 +15,10 @@ import Data.Maybe
 
     The strength of a given set of properties i.e. the percentage of mutants they kill, could be defined as [1 - (n_survivors / n_mutants) * 100%].
 
-    The percentage of mutants to be killed can be determined from the percentage of survivors. The percentage of survivors will be calculated by
-    utilization of the 'countSurvivors' function as defined in Exercise2, after which the number is survivors is divided by the number of mutants.
+    The percentage of killed mutants can be determined from the percentage of survived mutants. The percentage of survivors will be calculated by
+    utilizing the 'countSurvivors' function as defined in Exercise2, after which the number of survivors is divided by the number of mutants.
 
-    Consequently, the remaining percentage of mutants is then the number of mutants killed.
+    Consequently, the remaining percentage of mutants would be the number of mutants killed.
 
     Although simple, this approach appears to cover what is expected
 
