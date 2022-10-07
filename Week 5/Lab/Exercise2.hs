@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: ?? minutes
+-- Time spent on this exercise was: 3.5 hours
 
 module Exercise2 where
 import Mutation
@@ -33,14 +33,16 @@ survived mutator props func x = do
 
 main :: IO ()
 main = do
+    testOne <- generate $ countSurvivors addElements 4000 [prop_tenElements] multiplicationTable
+    testTwo <- generate $ countSurvivors addElements 4000 [prop_tenElements, prop_linear] multiplicationTable
+    testThree <- generate $ countSurvivors shuffled 4000 [prop_tenElements, prop_linear] multiplicationTable
     putStrLn "After implementation of the countSurvivors function we can see the following results per test"
     putStrLn "Test 1: 4000 mutants, properties: prop_tenElements, mutator: addElements"
     putStrLn "Number of survived mutants: "
-    generate $ countSurvivors addElements 4000 [prop_tenElements] multiplicationTable
+    print testOne
     putStrLn "Test 2: 4000 mutants, properties: prop_tenElements, prop_linear, mutator: addElements"
     putStrLn "Number of survived mutants: "
-    generate $ countSurvivors addElements 4000 [prop_tenElements, prop_linear] multiplicationTable
+    print testTwo
     putStrLn "Test 3: 4000 mutants, properties: prop_tenElements, prop_linear, mutator: shuffled"
     putStrLn "Number of survived mutants: "
-    generate $ countSurvivors shuffled 4000 [prop_tenElements, prop_linear] multiplicationTable
-    putStrLn ""
+    print testThree
