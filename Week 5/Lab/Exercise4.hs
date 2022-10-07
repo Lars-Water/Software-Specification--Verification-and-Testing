@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: ?? minutes
+-- Time spent on this exercise was: 30 minutes
 
 module Exercise4 where
 import Mutation
