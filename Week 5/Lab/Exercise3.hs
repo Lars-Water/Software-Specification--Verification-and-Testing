@@ -8,6 +8,7 @@ import Exercise2
 import MultiplicationTable
 import Test.QuickCheck
 import Data.List
+import Data.Function
 import Data.Maybe
 
 {-
@@ -28,18 +29,28 @@ import Data.Maybe
 
 -- Returns the minimal property subset
 -- Type definition of the function: mutator -> number of mutants -> [properties] -> functions -> [properties]
-minPropTest :: Eq a => (a -> Gen a) -> Integer -> [a -> Integer -> Bool] -> (Integer -> a) -> Gen [[a -> Integer -> Bool]]
+minPropTest :: Eq a => (a -> Gen a) -> Integer -> [(a -> Integer -> Bool, String)] -> (Integer -> a) -> Gen [[String]]
 minPropTest mutator n_mutants props fun = do
     let powerProps = powerSet props
-    surviversPerProps <- sequence $ map (\x -> countSurvivors mutator n_mutants x fun) powerProps
-    minPossibleSurvivors <- minimum surviversPerProps
-    indexLocations <- elemIndices minPossibleSurvivors surviversPerProps
-    sequence $ map (\x -> return $ powerProps !! x) indexLocations
-
+    surviversPerProps <- sequence $ map (\propSubset -> countSurvivors mutator n_mutants (map (\(prop,name) -> prop) propSubset ) fun) powerProps
+    let minSurvivor = minimum surviversPerProps
+    let propIndices = elemIndices minSurvivor surviversPerProps
+    let propNames = map (\propSubset -> map (\propTuple -> snd propTuple) propSubset ) powerProps
+    let minProp = map (\x -> propNames !! x) propIndices
+    return $ minProp
 
 
 -- Generate powerset of propery list: https://medium.com/@angerman/powersets-in-haskell-1df9684db52a
-
+powerSet :: [(a -> Integer -> Bool, String)] -> [[(a -> Integer -> Bool, String)]]
 powerSet [] = [[]]
 powerSet (x:xs) = map (x:) (powerSet xs) ++ powerSet xs
 
+
+
+main3 :: IO ()
+main3 = do
+    let properties = [(prop_tenElements, "prop_tenElements"), (prop_linear, "prop_linear"), (prop_firstElementIsInput, "prop_firstElementIsInput")]
+    testOne <- generate $ minPropTest addElements 3000 properties multiplicationTable
+    print $ testOne
+    let min = length (minimumBy (compare `on` length) testOne)
+    print $ filter (\x -> length x == min) testOne
