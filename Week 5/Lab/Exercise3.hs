@@ -17,8 +17,8 @@ import Data.Maybe
     to get all the possible combinations of properties.
     Then we will count the number of survivors for each combination
     and determine the which combinations lead to the minimum amount of survivors.
-    I if there is only, this is the minimal property subset.
-    If there are multiple combinations with the minimum
+    If there is only one, it is the minimal property subset.
+    If there are multiple combinations with the minimum amount of survivors,
     we select the subset with the smallest number of properties.
     For example, if [prop1, prop2] has the same amount of survivors as [prop1, prop2, prop3]
     then the subset containing prop1 and prop2 is the minimal property set.
