@@ -9,11 +9,11 @@ import Data.List
 import Data.Maybe
 
 {-  Looking at the Mutation.hs file we are given some examples
-    of functions that given a list of integers, return a list of integers
+    of functions that, given a list of integers, return a list of integers
     that is mutated in some way. All outputs should be covered by the anyList
     function from the examples. However, this is a very weak condition
-    (any list of integers) is allowed, which is not necessarily desirable,
-    because repeatin your mutation tests might lead to totally different outcomes.
+    (any list of integers is allowed), which is not necessarily desirable,
+    because repeating your mutation tests might lead to totally different outcomes.
     Here is an overview of outputs that are not covered by the other
     example functions:
     
@@ -24,9 +24,9 @@ import Data.Maybe
     - outputs were the elements are multiplied
     - outputs with no elements
     
-    We have used the same type definition as the examples into
+    We have used the same type definition as the examples
     and came up with the following possible mutations for a list of integers.
-    Each will have an example and (if applicable)
+    Each one will have an example and (if applicable)
     a statement of whether it is weaker or stronger than other post conditions.
     (Stronger post conditions are more restrictive.)
     The first 9 of these mutators we have implemented below.
