@@ -53,6 +53,49 @@ maxUnionLength set1 set2 = unionLength <= getLength set1 + getLength set2
 maxDifferenceLength :: Ord a => Set a -> Set a -> Bool
 maxDifferenceLength set1 set2 = differenceLength <= getLength set1
     where differenceLength = getLength (setDifference set1 set2)
+    
+-- Property to test if Union of an arbitrary set with the empty set will return the arbitrary set.
+emptySetUnion :: Ord a => Set a -> Bool
+emptySetUnion set1 = (setUnion set1 emptySet) == set1
+
+-- Property to test if Intersection of an arbitrary set with the empty set will return the empty set.
+emptySetIntersection :: Ord a => Set a -> Bool
+emptySetIntersection set1 = isEmpty $ setIntersection set1 emptySet
+
+-- Test idempotent property of Set Union. The unification of an arbitrary set with itself returns the arbitrary set.
+idempotenceUnion :: Ord a => Set a -> Bool
+idempotenceUnion set1 = (setUnion set1 set1) == set1
+
+-- Test idempotent property of Set Intersection. The intersection of an arbitrary set with itself returns the arbitrary set.
+idempotenceIntersection :: Ord a => Set a -> Bool
+idempotenceIntersection set1 = (setUnion set1 set1) == set1
+
+-- Test commutative property of Set Union. The order of the unification on the sets does not change the returned set.
+commutativityUnion :: Ord a => Set a -> Set a -> Bool
+commutativityUnion set1 set2 = (setUnion set1 set2) == (setUnion set2 set1)
+
+-- Test commutative property of Set Intersection. The order of the intersection on the sets does not change the returned set.
+commutativityIntersection :: Ord a => Set a -> Set a -> Bool
+commutativityIntersection set1 set2 = (setIntersection set1 set2) == (setIntersection set2 set1)
+
+-- Test associative property of Set Union. Sets under Union grouped through parentheses return the same set when the parentheses are changed.
+associativityUnion :: Ord a => Set a -> Set a -> Set a -> Bool
+associativityUnion set1 set2 set3 = (setUnion set1 (setUnion set2 set3)) == (setUnion set3 (setUnion set1 set2))
+
+-- Test associative property of Set Intersection. Sets under Intersection grouped through parentheses return the same set when the parentheses are changed.
+associativityIntersection :: Ord a => Set a -> Set a -> Set a -> Bool
+associativityIntersection set1 set2 set3 = (setIntersection set1 (setIntersection set2 set3)) == (setIntersection set3 (setIntersection set1 set2))
+
+-- Test distributive property of Set Union. Union of a set with grouped sets under Intersection return the same set as
+-- Intersection of all individual Unions of the single set with the grouped sets.
+distributivityUnion :: Ord a => Set a -> Set a -> Set a -> Bool
+distributivityUnion set1 set2 set3 = (setUnion set1 (setIntersection set2 set3)) == setIntersection (setUnion set1 set2) (setUnion set1 set3)
+
+-- Test distributive property of Set Intersection. Intersection of a set with grouped sets under Union return the same set as
+-- Union of all individual Intersection of the single set with the grouped sets.
+distributivityIntersection :: Ord a => Set a -> Set a -> Set a -> Bool
+distributivityIntersection set1 set2 set3 = (setIntersection set1 (setUnion set2 set3)) == setUnion (setIntersection set1 set2) (setIntersection set1 set3)
+
 
 main2 :: IO ()
 main2 = do
@@ -110,3 +153,141 @@ main2 = do
     print (maxDifferenceLength set1 set2)
     print "Applying quickCheck to the property:"
     quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> maxDifferenceLength set1 set2
+    
+    print "Testing the property that the union of a set with the empty set returns the set."
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    print set1
+    print "Union with empty set:"
+    print (setUnion set1 emptySet)
+    print "Does the property hold?"
+    print (emptySetUnion set1)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> emptySetUnion set1
+    print "Testing the property that the intersection of a set with the empty set returns the empty set."
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    print set1
+    print "Intersection with empty set:"
+    print (setIntersection set1 emptySet)
+    print "Does the property hold?"
+    print (emptySetIntersection set1)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> emptySetIntersection set1
+
+    print "Testing the idempotence property under Union."
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    print set1
+    print "Idempotence under Union:"
+    print (setUnion set1 set1)
+    print "Does the property hold?"
+    print (idempotenceUnion set1)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> idempotenceUnion set1
+    print "Testing the idempotence property under Intersection."
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    print set1
+    print "Idempotence under Intersection:"
+    print (setIntersection set1 set1)
+    print "Does the property hold?"
+    print (idempotenceIntersection set1)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> idempotenceIntersection set1
+
+    print "Testing the commutativity property under Union"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print "Set 1 Union Set 2:"
+    print (setUnion set1 set2)
+    print "Set 2 Union Set 1:"
+    print (setUnion set2 set1)
+    print "Does the property hold?"
+    print (commutativityUnion set1 set2)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> commutativityUnion set1 set2
+    print "Testing the intersection property under Intersection"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print "Set 1 Intersection Set 2:"
+    print (setIntersection set1 set2)
+    print "Set 2 Intersection Set 1:"
+    print (setIntersection set2 set1)
+    print "Does the property hold?"
+    print (commutativityIntersection set1 set2)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> commutativityIntersection set1 set2
+
+    print "Testing the associativity property under Union"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    set3 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print set3
+    print "Set 1 Union (Set 2 Union Set 3):"
+    print (( setUnion set1 (setUnion set2 set3)))
+    print "Set 3 Union (Set 1 Union Set 2):"
+    print (( setUnion set3 (setUnion set1 set2)))
+    print "Does the property hold?"
+    print (associativityUnion set1 set2 set3)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> forAll quickCheckGenerator $ \set3 -> associativityUnion set1 set2 set3
+    print "Testing the associativity property under Intersection"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    set3 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print set3
+    print "Set 1 Intersection (Set 2 Intersection Set 3):"
+    print (( setIntersection set1 (setIntersection set2 set3)))
+    print "Set 3 Intersection (Set 1 Intersection Set 2):"
+    print (( setIntersection set3 (setIntersection set1 set2)))
+    print "Does the property hold?"
+    print (associativityIntersection set1 set2 set3)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> forAll quickCheckGenerator $ \set3 -> associativityIntersection set1 set2 set3
+
+    print "Testing the distributivity property under Union"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    set3 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print set3
+    print "Set 1 UNION (Set 2 INTERSECTION Set 3):"
+    print ( setUnion set1 (setIntersection set2 set3))
+    print "(Set 1 UNION Set 2) INTERSECTION (Set 1 UNION Set 3):"
+    print (setIntersection (setUnion set1 set2) (setUnion set1 set3))
+    print "Does the property hold?"
+    print (distributivityUnion set1 set2 set3)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> forAll quickCheckGenerator $ \set3 -> associativityUnion set1 set2 set3
+    print "Testing the distributivity property under Intersection"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    set3 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print set3
+    print "Set 1 INTERSECTION (Set 2 UNION Set 3):"
+    print ( setIntersection set1 (setUnion set2 set3))
+    print "(Set 1 INTERSECTION Set 2) UNION (Set 1 INTERSECTION Set 3):"
+    print (setUnion (setIntersection set1 set2) (setIntersection set1 set3))
+    print "Does the property hold?"
+    print (distributivityIntersection set1 set2 set3)
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> forAll quickCheckGenerator $ \set3 -> associativityIntersection set1 set2 set3
+   
