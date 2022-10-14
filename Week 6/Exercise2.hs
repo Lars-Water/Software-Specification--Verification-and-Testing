@@ -27,6 +27,18 @@ setDifference (Set xs) (Set ys) = Set (xs \\ ys)
 -- EEN VOORBEELD KAN ZIJN BIJ INTERSECT: TESTEN OF INTERSECT ALLEEN UNIEKE ELEMENTEN BEVAT,
 -- TESTEN OF INTERSECT ALLEEN ELEMENTEN BEVAT DIE IN BEIDE SETS ZITTEN
 
+-- Property to test set intersection + difference -> the intersect of (the intersect of two lists + the difference of two lists) 
+-- can be at most the length of 0
+intersectOfDifferenceAndIntersect :: Ord a => Set a -> Set a -> Bool
+intersectOfDifferenceAndIntersect set1 set2 = length == 0
+    where length = getLength $ setIntersection (setIntersection set1 set2) (setDifference set1 set2)
+
+-- Property to test set difference -> the intersect of (the difference of two lists + the difference of two lists with the lists 
+-- placed the other way around) can be at most the length of 0
+intersectOfDifferenceAndDifference :: Ord a => Set a -> Set a -> Bool
+intersectOfDifferenceAndDifference set1 set2 = length == 0
+    where length = getLength $ setIntersection (setDifference set1 set2) (setDifference set2 set1)    
+
 -- Property to test set intersection -> the intersect of two lists can be at most the length of the smallest list
 maxIntersectLength :: Ord a => Set a -> Set a -> Bool
 maxIntersectLength set1 set2 =  intersectLength <= getLength set1 && intersectLength <= getLength set2
@@ -58,6 +70,22 @@ main2 = do
     print (maxIntersectLength set1 set2)
     print "Applying quickCheck to the property:"
     quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> maxIntersectLength set1 set2
+    print "Testing the property that the intersection of the difference of two sets and the difference of the same sets but flipped is empty"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> intersectOfDifferenceAndIntersect set1 set2
+    print "Testing the property that the intersection of the difference of two sets and the intersection of the same two sets is empty"
+    print "QuickCheck generator:"
+    set1 <- generate quickCheckGenerator
+    set2 <- generate quickCheckGenerator
+    print set1
+    print set2
+    print "Applying quickCheck to the property:"
+    quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> intersectOfDifferenceAndDifference set1 set2
     print "Testing the property that the union of two sets can be at most the length of the sum of the lengths of the two sets"
     print "QuickCheck generator:"
     set1 <- generate quickCheckGenerator
