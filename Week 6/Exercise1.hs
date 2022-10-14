@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 2.5 hours
+-- Time spent: 150 minutes --
 
 module Exercise1 where
 import SetOrd
