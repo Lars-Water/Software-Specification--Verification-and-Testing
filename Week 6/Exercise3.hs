@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 45 minutes
+-- Time spent on this exercise was: 30 minutes
 
 module Exercise3 where
 import Exercise2

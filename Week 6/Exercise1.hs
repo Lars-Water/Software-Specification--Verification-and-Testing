@@ -1,12 +1,11 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 45 minutes
+-- Time spent on this exercise was: 2.5 hours
 
 module Exercise1 where
 import SetOrd
 import Test.QuickCheck
 import Data.List
 import System.Random (randomRIO)
-
 
 -- Manual generator
 manualGenerator :: IO (Set Int)

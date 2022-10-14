@@ -1,5 +1,5 @@
 -- This file is property of the group Notorious Fortunate Panda © 2022
--- Time spent on this exercise was: 45 minutes
+-- Time spent on this exercise was: 3.45 hours
 
 module Exercise2 where
 import Exercise1
@@ -44,6 +44,7 @@ maxDifferenceLength set1 set2 = differenceLength <= getLength set1
 
 main2 :: IO ()
 main2 = do
+    -- quickCheck $ forAll quickCheckGenerator $ \set1 -> forAll quickCheckGenerator $ \set2 -> HIEPROPERTY set1 set2
     print "Testing the properties of the set intersection, union and difference functions"
     print "Testing the property that the intersection of two sets can be at most the length of the smallest set"
     print "QuickCheck generator:"
